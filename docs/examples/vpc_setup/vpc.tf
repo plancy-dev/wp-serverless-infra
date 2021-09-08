@@ -89,15 +89,15 @@ resource "aws_route_table" "main_private" {
 }
 
 resource "aws_route_table_association" "main_subnets_public" {
-  count          = length(data.aws_subnet_ids.main_public.ids)
-  subnet_id      = tolist(data.aws_subnet_ids.main_public.ids)[count.index]
-  route_table_id = aws_route_table.main_public.id
+  count          = length(data.aws_availability_zones.available)
+  subnet_id      = element(data.aws_subnet_ids.main_public.*.id, count.index)
+  route_table_id = element(aws_route_table.main_public.*.id, count.index)
 }
 
 resource "aws_route_table_association" "main_subnets_private" {
-  count          = length(data.aws_subnet_ids.main_private.ids)
-  subnet_id      = tolist(data.aws_subnet_ids.main_private.ids)[count.index]
-  route_table_id = aws_route_table.main_private.id
+  count          = length(data.aws_availability_zones.available)
+  subnet_id      = element(data.aws_subnet_ids.main_private.*.id, count.index)
+  route_table_id = element(aws_route_table.main_private.*.id, count.index)
 }
 
 resource "aws_vpc_endpoint" "main_s3" {
